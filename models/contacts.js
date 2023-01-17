@@ -50,15 +50,15 @@ async function addContact({ name, email, phone }) {
 
 async function updateContact(contactId, body) {
   const parsedContacts = await listContacts();
-  let updatedContact = "";
-  for (let contact of parsedContacts) {
-    if (contact.id === contactId) {
-      contact = { ...contact, ...body };
-      updatedContact = contact;
+  let updatedContact = false
+  for (let i = 0; i < parsedContacts.length; i++) {
+    if (parsedContacts[i].id === contactId) {
+      parsedContacts[i] = { ...parsedContacts[i], ...body };
+      updatedContact = parsedContacts[i];
+      fs.writeFile(contactsPath, JSON.stringify(parsedContacts));
       return;
     }
   }
-  fs.writeFile(contactsPath, JSON.stringify(parsedContacts));
   return updatedContact;
 }
 
