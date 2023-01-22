@@ -56,10 +56,9 @@ async function updateContact(contactId, body) {
       parsedContacts[i] = { ...parsedContacts[i], ...body };
       updatedContact = parsedContacts[i];
       fs.writeFile(contactsPath, JSON.stringify(parsedContacts));
-      return;
+      return updatedContact;
     }
   }
-  return updatedContact;
 }
 
 module.exports = {
