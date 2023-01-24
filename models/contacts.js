@@ -50,7 +50,9 @@ async function addContact({ name, email, phone }) {
 
 async function updateContact(contactId, body) {
   const parsedContacts = await listContacts();
-  let updatedContact = false
+  let updatedContact = false;
+
+  //  У цьому випадку фор використаний для переривання проходження по масиву, після знаходження потрібного контакту, адже якщо потрібний контакт буде першим у списку, немає потреби проходитись по тисячях наступних контактів.
   for (let i = 0; i < parsedContacts.length; i++) {
     if (parsedContacts[i].id === contactId) {
       parsedContacts[i] = { ...parsedContacts[i], ...body };

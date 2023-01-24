@@ -1,5 +1,4 @@
 const express = require("express");
-const Joi = require("joi");
 const {
   listContacts,
   getContactById,
@@ -7,39 +6,20 @@ const {
   removeContact,
   updateContact,
 } = require("../../models/contacts");
+const {
+  newContactSchema,
+  contactUpdateSchema,
+  validateContact,
+} = require("../../models/validation");
 const router = express.Router();
 
-// joi validation schems
-const newContactSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(15).required(),
-  email: Joi.string()
-    .email({
-      minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
-    })
-    .required(),
-  phone: Joi.string().min(9).max(15).required(),
-});
-
-const contactUpdateSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(15),
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
-  }),
-  phone: Joi.string().min(9).max(15),
-});
-
-
-
-
-router.get("/", async (req, res, next) => {
+router.get("/", async (req, res) => {
   const data = await listContacts();
   res.json(data);
 });
 
 
-router.get("/:contactId", async (req, res, next) => {
+router.get("/:contactId", async (req, res) => {
   const { contactId } = req.params;
   const data = await getContactById(contactId);
   if (!data) {
@@ -51,11 +31,11 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 
-router.post("/", async (req, res, next) => {
-  const { error, value } = newContactSchema.validate(req.body);
-  console.log(error);
+router.post("/", async (req, res) => {
+  const { error, value } = validateContact(newContactSchema, req.body);
+
   if (error) {
-    res.status(400).json({ message: error.details[0].message });
+    res.status(400).json({ message: error });
     return;
   }
   const data = await addContact(value);
@@ -63,7 +43,7 @@ router.post("/", async (req, res, next) => {
 });
 
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:contactId", async (req, res) => {
   const { contactId } = req.params;
   const data = await removeContact(contactId);
   if (!data) {
@@ -75,17 +55,13 @@ router.delete("/:contactId", async (req, res, next) => {
 });
 
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId", async (req, res) => {
   const { contactId } = req.params;
 
-  if (!Object.keys(req.body).length) {
-    res.status(400).json({ message: "missing fields" });
-    return;
-  }
+  const { error, value } = validateContact(contactUpdateSchema, req.body);
 
-  const { error, value } = contactUpdateSchema.validate(req.body);
   if (error) {
-    res.status(400).json({ message: error.details[0].message });
+    res.status(400).json({ message: error });
     return;
   }
   const data = await updateContact(contactId, value);
@@ -95,7 +71,7 @@ router.put("/:contactId", async (req, res, next) => {
     return;
   }
 
-  res.json(data);
+  res.status(200).json(data);
 });
 
 module.exports = router;
