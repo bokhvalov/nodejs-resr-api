@@ -12,9 +12,17 @@ class NodeError extends Error {
     }
   }
   
+  class WrongIdError extends NodeError {
+    constructor(message) {
+      super(message);
+      this.status = 404;
+    }
+  }
+  
   
   module.exports = {
     NodeError,
-    ValidationError
+    ValidationError,
+    WrongIdError
   };
   

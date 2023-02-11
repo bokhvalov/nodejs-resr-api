@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 
-connectMongo().catch((err) => console.log(err));
-
 async function connectMongo() {
-  await mongoose.connect(
-    "mongodb+srv://nodejs:nodejs1234@phonebook.9dqsl1q.mongodb.net/?retryWrites=true&w=majority"
-  );
+  try {
+    await mongoose.connect(
+      "mongodb+srv://nodejs:nodejs1234@phonebook.9dqsl1q.mongodb.net/db-contacts?retryWrites=true&w=majority"
+    );
+    console.log("Database connection successful");
+  } catch (error) {
+    console.log("Database connection error!", error);
+    process.exit(1);
+  }
 }
 
 module.exports = {

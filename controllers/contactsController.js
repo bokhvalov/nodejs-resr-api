@@ -1,54 +1,74 @@
 const {
-  listContacts,
+  getContacts,
   getContactById,
   addContact,
   removeContact,
   updateContact,
-} = require("../models/contacts");
+} = require("../services/contactsService");
+const { WrongIdError } = require("../helpers/errors");
 
 const getContactsController = async (req, res) => {
-  const data = await listContacts();
-  res.json(data);
-};
-
-const getContactByIdController = async (req, res) => {
-  const { contactId } = req.params;
-  const data = await getContactById(contactId);
-  if (!data) {
-    res.status(404).json({ message: "Not found" });
-    return;
-  }
-
+  const data = await getContacts();
   res.json(data);
 };
 
 const addContactController = async (req, res) => {
-  const data = await addContact(req.body);
-  res.status(201).json(data);
+  const newContact = await addContact(req.body);
+  res.status(201).json(newContact);
+};
+
+const getContactByIdController = async (req, res) => {
+  const { contactId } = req.params;
+  const contact = await getContactById(contactId);
+
+  if (!contact) {
+    throw new WrongIdError(
+      `Failure, no contacts with id '${contactId}' found!`
+    );
+  }
+  res.json(contact);
 };
 
 const removeContactController = async (req, res) => {
   const { contactId } = req.params;
-  const data = await removeContact(contactId);
-  if (!data) {
-    res.status(404).json({ message: "Not found" });
-    return;
+  const removedContact = await removeContact(contactId);
+
+  if (!removedContact) {
+    throw new WrongIdError(
+      `Failure, no contacts with id '${contactId}' found!`
+    );
   }
 
-  res.json({ message: "Contact deleted" });
+  res.json(removedContact);
 };
 
 const updateContactController = async (req, res) => {
   const { contactId } = req.params;
+  const updatedContact = await updateContact(contactId, req.body);
 
-  const data = await updateContact(contactId, req.body);
-
-  if (!data) {
-    res.status(404).json({ message: "Not found" });
-    return;
+  if (!updatedContact) {
+    throw new WrongIdError(
+      `Failure, no contacts with id '${contactId}' found!`
+    );
   }
 
-  res.status(200).json(data);
+  res.json(updatedContact);
+};
+
+const updateStatusContact = async (req, res) => {
+  const { contactId } = req.params;
+  const contactToBeUpdated = await getContactById(contactId);
+
+  if (!contactToBeUpdated) {
+    throw new WrongIdError(
+      `Failure, no contacts with id '${contactId}' found!`
+    );
+  }
+
+  const updatedContact = await updateContact(contactId, {
+    favorite: req.body.favorite,
+  });
+  res.json(updatedContact);
 };
 
 module.exports = {
@@ -57,4 +77,5 @@ module.exports = {
   addContactController,
   removeContactController,
   updateContactController,
+  updateStatusContact,
 };
