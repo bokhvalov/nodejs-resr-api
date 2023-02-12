@@ -1,18 +1,15 @@
 const { Contact } = require("../db/contactModel");
 
 async function getContacts() {
-  const listOfContacts = await Contact.find();
-  return listOfContacts;
+  return await Contact.find();
 }
 
 async function getContactById(contactId) {
-  const contact = await Contact.findOne({ _id: contactId });
-  if (contact) return contact;
+  return await Contact.findOne({ _id: contactId });
 }
 
 async function removeContact(contactId) {
-  const contact = await Contact.findOneAndDelete({ _id: contactId });
-  if (contact) return contact;
+  return await Contact.findOneAndDelete({ _id: contactId });
 }
 
 async function addContact(reqBody) {
@@ -23,12 +20,12 @@ async function addContact(reqBody) {
 }
 
 async function updateContact(contactId, body) {
-  const contactToBeUpdated = Contact.findByIdAndUpdate(
+  const updatedContact = Contact.findByIdAndUpdate(
     { _id: contactId },
     body,
     { returnDocument: "after" }
   );
-  if (contactToBeUpdated) return contactToBeUpdated;
+return updatedContact;
 }
 
 module.exports = {

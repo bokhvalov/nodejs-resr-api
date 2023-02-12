@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
+require('dotenv').config();
 
 async function connectMongo() {
   try {
     await mongoose.connect(
-      "mongodb+srv://nodejs:nodejs1234@phonebook.9dqsl1q.mongodb.net/db-contacts?retryWrites=true&w=majority"
+      process.env.MONGO_URL
     );
     console.log("Database connection successful");
   } catch (error) {
