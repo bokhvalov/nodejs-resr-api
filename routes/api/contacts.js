@@ -12,7 +12,7 @@ const {
   newContactValidaion,
   updatedContactValidation,
   updateStatusContactValidation,
-} = require("../../middlewares/validationMiddleware");
+} = require("../../middlewares/contactsValidation");
 const router = express.Router();
 
 router.get("/", asyncWrapper(getContactsController));
