@@ -1,10 +1,14 @@
 const express = require("express");
-const { addUserController } = require("../../controllers/usersController");
-const { newUserValidation } = require("../../middlewares/usersValidation");
+const { asyncWrapper } = require("../../helpers/apiHelpers");
+const {
+  addUserController,
+  loginController,
+} = require("../../controllers/usersController");
+const { userValidation } = require("../../middlewares/usersValidation");
+const auth = require("../../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/signup", newUserValidation, asyncWrapper(addUserController));
-
-
+router.post("/signup/", userValidation, asyncWrapper(addUserController));
+router.post("/login/", auth, userValidation, asyncWrapper(loginController));
 module.exports = router;

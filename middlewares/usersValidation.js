@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { ValidationError } = require("../helpers/errors");
 
 module.exports = {
-  newUserValidation: (req, res, next) => {
+  userValidation: (req, res, next) => {
     const schema = Joi.object({
       email: Joi.string()
         .email({

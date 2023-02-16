@@ -7,7 +7,7 @@ const {
 } = require("../services/contactsService");
 const { WrongIdError } = require("../helpers/errors");
 
-const addUserController = async (req, res) => {
+const getContactsController = async (req, res) => {
   const data = await getContacts();
   res.json(data);
 };
