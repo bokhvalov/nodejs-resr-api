@@ -6,6 +6,8 @@ const {
   addUser,
   getUserByEmail,
   updateUserToken,
+  logoutUser,
+  getUser,
 } = require("../services/userService");
 
 const addUserController = async (req, res) => {
@@ -27,4 +29,23 @@ const loginController = async (req, res) => {
 
   res.json({ token, user: { email, subscription } });
 };
-module.exports = { addUserController, loginController };
+
+const logoutController = async (req, res) => {
+  const userToLogout = req.user._id;
+  await logoutUser(userToLogout);
+  res.sendStatus(204);
+};
+
+const getCurrentController = async (req, res) => {
+  const currentUserId = req.user._id;
+  const { email, subscription } = await getUser(currentUserId);
+
+  res.json({ email, subscription });
+};
+
+module.exports = {
+  addUserController,
+  loginController,
+  logoutController,
+  getCurrentController,
+};

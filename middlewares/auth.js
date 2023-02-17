@@ -1,22 +1,27 @@
 const jwt = require("jsonwebtoken");
 const { UnauthorizedError } = require("../helpers/errors");
 const { getUser } = require("../services/userService");
+require("dotenv").config();
+
+const jwtSecret = process.env.SECRET_JWT;
 
 const auth = async (req, res, next) => {
   const { authorization = "" } = req.headers;
   const [authType, token] = authorization.split(" ");
-  console.log(token);
-  if (authType !== "Bearer") throw new UnauthorizedError("Not authorized");
+  if (authType !== "Bearer") {
+    return next(new UnauthorizedError("Not authorized"));
+  }
+  jwt.verify(token, jwtSecret, async (err, decoded) => {
+    if (err) return next(new UnauthorizedError("Not authorized"));
 
-  jwt.verify(token, process.env.SECRET_JWT, function (err, userID) {
-    if (!userID || err) {
-      throw new UnauthorizedError("Not authorized");
-      }
-      req.user = await getUser(userID);
-  next();
+    const userData = await getUser(decoded.userId);
+    if (userData?.token !== token)
+      return next(new UnauthorizedError("Not authorized"));
+
+    const { email, _id, subscription } = userData;
+    req.user = { _id, email, subscription };
+    next();
   });
-
-  
 };
 
 module.exports = auth;

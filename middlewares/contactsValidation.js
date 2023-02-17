@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { ValidationError } = require("../helpers/errors");
 
 module.exports = {
-  newContactValidaion: (req, res, next) => {
+  newContactValidation: (req, res, next) => {
     const schema = Joi.object({
       name: Joi.string().alphanum().min(3).max(15).required(),
       email: Joi.string()

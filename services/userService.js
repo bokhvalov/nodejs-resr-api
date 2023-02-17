@@ -28,4 +28,14 @@ async function getUser(userId) {
   return await User.findOne({ _id: userId });
 }
 
-module.exports = { addUser, getUserByEmail, updateUserToken, getUser };
+async function logoutUser(userID) {
+  return await User.findOneAndUpdate({ _id: userID }, { token: null });
+}
+
+module.exports = {
+  addUser,
+  getUserByEmail,
+  updateUserToken,
+  getUser,
+  logoutUser,
+};

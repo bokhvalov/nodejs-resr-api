@@ -1,7 +1,7 @@
 const { Contact } = require("../db/contactModel");
 
-async function getContacts() {
-  return await Contact.find();
+async function getContacts(currUser) {
+  return await Contact.find({ owner: currUser });
 }
 
 async function getContactById(contactId) {
@@ -20,12 +20,10 @@ async function addContact(reqBody) {
 }
 
 async function updateContact(contactId, body) {
-  const updatedContact = Contact.findByIdAndUpdate(
-    { _id: contactId },
-    body,
-    { returnDocument: "after" }
-  );
-return updatedContact;
+  const updatedContact = Contact.findByIdAndUpdate({ _id: contactId }, body, {
+    returnDocument: "after",
+  });
+  return updatedContact;
 }
 
 module.exports = {
