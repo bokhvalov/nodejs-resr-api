@@ -26,7 +26,7 @@ const getContactByIdController = async (req, res) => {
   const { contactId } = req.params;
   const contact = await getContactById(contactId);
 
-  if (!contact || contact.owner !== currUser) {
+  if ( contact?.owner.toString() !== currUser.toString()) {
     throw new WrongIdError(
       `Failure, no contacts with id '${contactId}' found!`
     );

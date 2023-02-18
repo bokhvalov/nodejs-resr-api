@@ -39,7 +39,6 @@ const logoutController = async (req, res) => {
 const getCurrentController = async (req, res) => {
   const currentUserId = req.user._id;
   const { email, subscription } = await getUser(currentUserId);
-
   res.json({ email, subscription });
 };
 

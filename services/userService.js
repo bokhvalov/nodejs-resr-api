@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 
 const { User } = require("../db/UserModel");
-const { DuplicateEmail } = require("../helpers/errors");
+const { DuplicateEmailError } = require("../helpers/errors");
 
 async function addUser(reqBody) {
   reqBody.password = bcrypt.hashSync(reqBody.password, 8);
@@ -11,7 +11,7 @@ async function addUser(reqBody) {
     const { email, subscription } = await newUser.save();
     return { email, subscription };
   } catch (error) {
-    if (error.code === 11000) throw new DuplicateEmail("Email in use");
+    if (error.code === 11000) throw new DuplicateEmailError("Email in use");
     throw error;
   }
 }
