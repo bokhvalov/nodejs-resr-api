@@ -12,7 +12,7 @@ const errorHandler = (error, req, res, next) => {
     return res.status(error.status).json({ message: error.message });
   }
   if (error instanceof multer.MulterError) {
-    return res.status(500).json({ message: "multer" });
+    return res.status(500).json({ message: error.message });
   }
   res.status(500).json({ message: error.message });
 };
