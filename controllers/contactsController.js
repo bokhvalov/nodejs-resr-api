@@ -24,9 +24,9 @@ const getContactByIdController = async (req, res) => {
   const currUser = req.user._id;
 
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const contact = await getContactById(req.user._id, contactId);
 
-  if ( contact?.owner.toString() !== currUser.toString()) {
+  if (contact?.owner.toString() !== currUser.toString()) {
     throw new WrongIdError(
       `Failure, no contacts with id '${contactId}' found!`
     );
@@ -36,9 +36,7 @@ const getContactByIdController = async (req, res) => {
 
 const removeContactController = async (req, res) => {
   const { contactId } = req.params;
-
-  await checkOwnership(req.user._id, contactId);
-  const removedContact = await removeContact(contactId);
+  const removedContact = await removeContact(req.user._id, contactId);
 
   res.json(removedContact);
 };
@@ -46,31 +44,17 @@ const removeContactController = async (req, res) => {
 const updateContactController = async (req, res) => {
   const { contactId } = req.params;
 
-  await checkOwnership(req.user._id, contactId);
-
-  const updatedContact = await updateContact(contactId, req.body);
+  const updatedContact = await updateContact(req.user._id, contactId, req.body);
   res.json(updatedContact);
 };
 
 const updateStatusContact = async (req, res) => {
   const { contactId } = req.params;
 
-  await checkOwnership(req.user._id, contactId);
-
-  const updatedContact = await updateContact(contactId, {
+  const updatedContact = await updateContact(req.user._id, contactId, {
     favorite: req.body.favorite,
   });
   res.json(updatedContact);
-};
-
-const checkOwnership = async (userId, contactId) => {
-  const contact = await getContactById(contactId);
-  if (!contact || contact.owner.toString() !== userId.toString()) {
-    throw new WrongIdError(
-      `Failure, no contacts with id '${contactId}' found!`
-    );
-  }
-  return true;
 };
 
 module.exports = {
