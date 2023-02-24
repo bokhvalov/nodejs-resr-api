@@ -1,4 +1,5 @@
 const { NodeError } = require("./errors");
+const multer = require("multer");
 
 const asyncWrapper = (controller) => {
   return (req, res, next) => {
@@ -9,6 +10,9 @@ const asyncWrapper = (controller) => {
 const errorHandler = (error, req, res, next) => {
   if (error instanceof NodeError) {
     return res.status(error.status).json({ message: error.message });
+  }
+  if (error instanceof multer.MulterError) {
+    return res.status(500).json({ message: "multer" });
   }
   res.status(500).json({ message: error.message });
 };

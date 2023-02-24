@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 const { UnauthorizedError } = require("../helpers/errors");
 const {
@@ -11,8 +12,10 @@ const {
 } = require("../services/userService");
 
 const addUserController = async (req, res) => {
-  const newContact = await addUser(req.body);
-  res.status(201).json(newContact);
+  const avatarURL = gravatar.url(req.body.email, { protocol: "http" });
+  console.log(avatarURL);
+  const newUser = await addUser({ ...req.body, avatarURL: avatarURL });
+  res.status(201).json(newUser);
 };
 
 const loginController = async (req, res) => {
