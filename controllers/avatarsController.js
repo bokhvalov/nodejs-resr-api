@@ -1,36 +1,19 @@
-const Jimp = require("jimp");
-var fs = require("fs");
-const path = require("path");
+const { ValidationError } = require("../helpers/errors");
+const { modifyUserAvatar } = require("../services/avatarService");
+const { updateUserProp } = require("../services/userService");
 
 const updateAvatarController = async (req, res, next) => {
-  const uploadedFilePath = req.file.destination;
-  const uploadedFileName = req.file.filename;
+  const originalImg = req.file;
   const userId = req.user._id;
-  const newAvatarPath = path.resolve(
-    projectRootDirectory,
-    "public",
-    "avatars",
-    "avatar-" + userId
-  );
 
-  fs.unlinkSync(newAvatarPath);
+  if (!originalImg) throw new ValidationError("Image should be attached");
 
-  await Jimp.read(uploadedFilePath + uploadedFileName)
-    .then((img) => {
-      img.resize(250, 250).write("avatar-", userId);
-    })
-    .catch((err) => {
-      fs.unlinkSync(uploadedFile);
-      next(err);
-    });
+  const newAvatarURL = await modifyUserAvatar(originalImg, userId);
+  const { avatarURL } = await updateUserProp(userId, {
+    avatarURL: newAvatarURL,
+  });
 
-    fs.rename(
-      uploadedFilePath + "avatar-" + userId,
-      newAvatarPath,
-      function (err) {
-        if (err) console.log("old avatar does not exist")
-      }
-    );
+  res.json(avatarURL);
 };
 
 module.exports = { updateAvatarController };

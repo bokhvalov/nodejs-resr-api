@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/contacts", contactsRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/avatars", avatarsRouter);
+app.use("/avatars", avatarsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });

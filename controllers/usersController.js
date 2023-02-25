@@ -6,7 +6,7 @@ const { UnauthorizedError } = require("../helpers/errors");
 const {
   addUser,
   getUserByEmail,
-  updateUserToken,
+  updateUserProp,
   logoutUser,
   getUser,
 } = require("../services/userService");
@@ -28,7 +28,7 @@ const loginController = async (req, res) => {
     throw new UnauthorizedError(`Email or password is wrong`);
 
   const token = jwt.sign({ userId }, process.env.SECRET_JWT);
-  await updateUserToken(userId, token);
+  await updateUserProp(userId, { token: token });
 
   res.json({ token, user: { email, subscription } });
 };
@@ -44,7 +44,6 @@ const getCurrentController = async (req, res) => {
   const { email, subscription } = await getUser(currentUserId);
   res.json({ email, subscription });
 };
-
 module.exports = {
   addUserController,
   loginController,
