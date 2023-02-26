@@ -7,13 +7,12 @@ const updateAvatarController = async (req, res, next) => {
   const userId = req.user._id;
 
   if (!originalImg) throw new ValidationError("Image should be attached");
-
   const newAvatarURL = await modifyUserAvatar(originalImg, userId);
   const { avatarURL } = await updateUserProp(userId, {
     avatarURL: newAvatarURL,
   });
 
-  res.json(avatarURL);
+  res.json({avatarURL});
 };
 
 module.exports = { updateAvatarController };

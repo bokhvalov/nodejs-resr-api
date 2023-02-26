@@ -5,7 +5,7 @@ const { ValidationError } = require("../helpers/errors");
 async function modifyUserAvatar(originalImg, userId) {
   const { path: originalImgPath } = originalImg;
   const imgExtension = originalImgPath.split(".").at(-1);
-  const newImgPath = "/avatars/avatar-" + userId + "." + imgExtension;
+  const newImgPath = "public/avatars/avatar-" + userId + "." + imgExtension;
 
   if (imgExtension !== "png") {
     fs.unlinkSync(originalImgPath);
@@ -21,7 +21,7 @@ async function modifyUserAvatar(originalImg, userId) {
     fs.unlinkSync(originalImgPath);
   });
 
-  return newImgPath;
+  return '/avatars/avatar-' + userId + "." + imgExtension;
 }
 
 module.exports = { modifyUserAvatar };

@@ -13,7 +13,6 @@ const {
 
 const addUserController = async (req, res) => {
   const avatarURL = gravatar.url(req.body.email, { protocol: "http" });
-  console.log(avatarURL);
   const newUser = await addUser({ ...req.body, avatarURL: avatarURL });
   res.status(201).json(newUser);
 };
