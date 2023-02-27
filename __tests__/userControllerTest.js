@@ -43,21 +43,20 @@ describe("User Login", () => {
 
     const mReq = { body: requestBody };
     const mRes = {
+      body: null,
       status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-      json: jest.fn(),
+      json: jest.fn((response) => (mRes.body = response)),
     };
 
     await loginController(mReq, mRes);
-    console.log(mRes.json);
-    expect(mRes.status).toHaveBeenCalledWith(200);
-    expect(mRes.json).toHaveBeenCalledWith({
-      token, ///how to get token from response and verify?
-      //expect(jwt.verify(mRes.token, process.env.SECRET_JWT).userId).toEqual(user._id);
-      user: {
-        email: requestBody.email,
-        subscription: user.subscription,
-      },
+    const { status, body } = mRes;
+    expect(status).toHaveBeenCalledWith(200);
+    expect(jwt.verify(body.token, process.env.SECRET_JWT).userId).toEqual(
+      user._id
+    );
+    expect(body.user).toEqual({
+      email: requestBody.email,
+      subscription: user.subscription,
     });
   });
 });
