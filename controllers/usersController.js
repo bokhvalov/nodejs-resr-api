@@ -29,7 +29,7 @@ const loginController = async (req, res) => {
   const token = jwt.sign({ userId }, process.env.SECRET_JWT);
   await updateUserProp(userId, { token: token });
 
-  res.json({ token, user: { email, subscription } });
+  res.status(200).json({ token, user: { email, subscription } });
 };
 
 const logoutController = async (req, res) => {
