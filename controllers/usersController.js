@@ -1,18 +1,20 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 const { UnauthorizedError } = require("../helpers/errors");
 const {
   addUser,
   getUserByEmail,
-  updateUserToken,
+  updateUserProp,
   logoutUser,
   getUser,
 } = require("../services/userService");
 
 const addUserController = async (req, res) => {
-  const newContact = await addUser(req.body);
-  res.status(201).json(newContact);
+  const avatarURL = gravatar.url(req.body.email, { protocol: "http" });
+  const newUser = await addUser({ ...req.body, avatarURL: avatarURL });
+  res.status(201).json(newUser);
 };
 
 const loginController = async (req, res) => {
@@ -25,9 +27,9 @@ const loginController = async (req, res) => {
     throw new UnauthorizedError(`Email or password is wrong`);
 
   const token = jwt.sign({ userId }, process.env.SECRET_JWT);
-  await updateUserToken(userId, token);
+  await updateUserProp(userId, { token: token });
 
-  res.json({ token, user: { email, subscription } });
+  res.status(200).json({ token, user: { email, subscription } });
 };
 
 const logoutController = async (req, res) => {
@@ -41,7 +43,6 @@ const getCurrentController = async (req, res) => {
   const { email, subscription } = await getUser(currentUserId);
   res.json({ email, subscription });
 };
-
 module.exports = {
   addUserController,
   loginController,

@@ -6,14 +6,14 @@ const {
   removeContactController,
   updateContactController,
   updateStatusContact,
-} = require("../../controllers/contactsController");
-const { asyncWrapper } = require("../../helpers/apiHelpers");
-const auth = require("../../middlewares/auth");
+} = require("../controllers/contactsController");
+const { asyncWrapper } = require("../helpers/apiHelpers");
+const auth = require("../middlewares/auth");
 const {
   newContactValidation,
   updatedContactValidation,
   updateStatusContactValidation,
-} = require("../../middlewares/contactsValidation");
+} = require("../middlewares/contactsValidation");
 const router = express.Router();
 
 router.get("/", auth, asyncWrapper(getContactsController));

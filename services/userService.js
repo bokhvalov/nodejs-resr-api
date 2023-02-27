@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-
 const { User } = require("../db/UserModel");
 const { DuplicateEmailError } = require("../helpers/errors");
 
@@ -20,8 +19,10 @@ async function getUserByEmail(userEmail) {
   return await User.findOne({ email: userEmail });
 }
 
-async function updateUserToken(userId, token) {
-  return await User.findOneAndUpdate({ _id: userId }, { token });
+async function updateUserProp(userId, updatedProp) {
+  return await User.findOneAndUpdate({ _id: userId }, updatedProp, {
+    new: true,
+  });
 }
 
 async function getUser(userId) {
@@ -35,7 +36,7 @@ async function logoutUser(userID) {
 module.exports = {
   addUser,
   getUserByEmail,
-  updateUserToken,
+  updateUserProp,
   getUser,
   logoutUser,
 };
