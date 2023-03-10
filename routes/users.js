@@ -35,7 +35,7 @@ router.post(
   userEmailValidation,
   asyncWrapper(sendVerificationTokenController)
 );
-router.post("/verify/:verificationToken", asyncWrapper(verifyEmailController));
+router.get("/verify/:verificationToken", asyncWrapper(verifyEmailController));
 router.post("/login", userValidation, asyncWrapper(loginController));
 router.get("/logout", auth, asyncWrapper(logoutController));
 router.get("/current", auth, asyncWrapper(getCurrentController));
