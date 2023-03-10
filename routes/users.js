@@ -6,9 +6,13 @@ const {
   logoutController,
   getCurrentController,
   verifyEmailController,
+  sendVerificationTokenController,
 } = require("../controllers/usersController");
 const { updateAvatarController } = require("../controllers/avatarsController");
-const { userValidation } = require("../middlewares/usersValidation");
+const {
+  userValidation,
+  userEmailValidation,
+} = require("../middlewares/usersValidation");
 const auth = require("../middlewares/auth");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
@@ -26,6 +30,11 @@ const upload = multer({ storage: storage });
 const router = express.Router();
 
 router.post("/signup", userValidation, asyncWrapper(addUserController));
+router.post(
+  "/verify",
+  userEmailValidation,
+  asyncWrapper(sendVerificationTokenController)
+);
 router.post("/verify/:verificationToken", asyncWrapper(verifyEmailController));
 router.post("/login", userValidation, asyncWrapper(loginController));
 router.get("/logout", auth, asyncWrapper(logoutController));

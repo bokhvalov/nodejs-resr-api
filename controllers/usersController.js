@@ -1,12 +1,13 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const gravatar = require("gravatar");
-const sgMail = require("@sendgrid/mail");
-const { SENDGRID_API_KEY, HOST_URL } = process.env;
 const { v4: uuidv4 } = require("uuid");
-sgMail.setApiKey(SENDGRID_API_KEY);
+const gravatar = require("gravatar");
 
-const { UnauthorizedError, NotFoundError } = require("../helpers/errors");
+const {
+  UnauthorizedError,
+  NotFoundError,
+  NodeError,
+} = require("../helpers/errors");
 const {
   addUser,
   getUserByEmail,
@@ -15,6 +16,7 @@ const {
   getUser,
   getUserByToken,
   confirmUserEmail,
+  sendVerificationToken,
 } = require("../services/userService");
 
 const addUserController = async (req, res) => {
@@ -22,18 +24,17 @@ const addUserController = async (req, res) => {
   const verificationToken = uuidv4();
 
   const newUser = await addUser({ ...req.body, avatarURL, verificationToken });
-  const msg = {
-    to: "bvancha@gmail.com",
-    from: "bvancha@gmail.com",
-    subject: "PhoneBook e-mail confirmation",
-    html: `<p>Please,confirm you mail:</p>
-    <a href="${HOST_URL + "/verify/" + verificationToken}">
-      Confirm
-    </a>`,
-  };
-  await sgMail.send(msg);
+  await sendVerificationToken(req.body.email, verificationToken);
 
   res.status(201).json(newUser);
+};
+
+const sendVerificationTokenController = async (req, res) => {
+  const { verify, verificationToken } = await getUserByEmail(req.body.email);
+  if (verify) throw new NodeError("Verification has already been passed!");
+
+  await sendVerificationToken(req.body.email, verificationToken);
+  res.json({ message: "Verification email sent" });
 };
 
 const verifyEmailController = async (req, res) => {
@@ -75,9 +76,11 @@ const getCurrentController = async (req, res) => {
   const { email, subscription } = await getUser(currentUserId);
   res.json({ email, subscription });
 };
+
 module.exports = {
   addUserController,
   verifyEmailController,
+  sendVerificationTokenController,
   loginController,
   logoutController,
   getCurrentController,
