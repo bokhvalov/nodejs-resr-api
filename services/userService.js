@@ -15,6 +15,17 @@ async function addUser(reqBody) {
   }
 }
 
+async function getUserByToken(verificationToken) {
+  return await User.findOne({ verificationToken });
+}
+
+async function confirmUserEmail(userId) {
+  return await User.findOneAndUpdate(
+    { _id: userId },
+    { verify: true, verificationToken: null }
+  );
+}
+
 async function getUserByEmail(userEmail) {
   return await User.findOne({ email: userEmail });
 }
@@ -35,6 +46,8 @@ async function logoutUser(userID) {
 
 module.exports = {
   addUser,
+  getUserByToken,
+  confirmUserEmail,
   getUserByEmail,
   updateUserProp,
   getUser,

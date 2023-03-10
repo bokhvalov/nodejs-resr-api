@@ -5,7 +5,7 @@ const {
   removeContact,
   updateContact,
 } = require("../services/contactsService");
-const { WrongIdError } = require("../helpers/errors");
+const { NotFoundError } = require("../helpers/errors");
 
 const getContactsController = async (req, res) => {
   const currUser = req.user._id;
@@ -27,7 +27,7 @@ const getContactByIdController = async (req, res) => {
   const contact = await getContactById(currUser, contactId);
 
   if (!contact) {
-    throw new WrongIdError(
+    throw new NotFoundError(
       `Failure, no contacts with id '${contactId}' found!`
     );
   }
