@@ -12,7 +12,7 @@ class ValidationError extends NodeError {
   }
 }
 
-class WrongIdError extends NodeError {
+class NotFoundError extends NodeError {
   constructor(message) {
     super(message);
     this.status = 404;
@@ -36,7 +36,7 @@ class UnauthorizedError extends NodeError {
 module.exports = {
   NodeError,
   ValidationError,
-  WrongIdError,
+  NotFoundError,
   DuplicateEmailError,
   UnauthorizedError,
 };
